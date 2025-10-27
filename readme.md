@@ -5,6 +5,7 @@
 - Современный минималистичный интерфейс
 - Цветовая палитра: **белый**, **тёмно-серый**, **#00AEEF (акцент)**
 
+![pic.png](https://github.com/tigran-ohanyan/web-pages-react/blob/techstore/pic.png?raw=true)
 ------------------------------------------------
 ## Установка и запуск / Installation & Setup
 ### На русском
@@ -19,7 +20,7 @@ npm run dev
 3. Откройте в браузере:
 ```
 http://localhost:3000
-```[readme.md](..%2Fweb-pages-react%2Freadme.md)
+```
 4. Для сборки продакшн-версии:
 ```bash
 npm run build

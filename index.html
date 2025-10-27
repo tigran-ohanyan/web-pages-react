@@ -298,22 +298,3 @@ return (
 </div>
 );
 }
-
-/*
---- Инструкции по интеграции в реальный проект Next.js + Tailwind ---
-1. Создай новый проект:
-npx create-next-app@latest techstore
-2. Установи Tailwind: (в корне проекта)
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-настрой tailwind.config.js -> content: ['./pages/**/*.{js,jsx,ts,tsx}','./components/**/*.{js,jsx,ts,tsx}']
-добавь в globals.css: @tailwind base; @tailwind components; @tailwind utilities;
-3. Разбей этот компонент на страницы и компоненты:
-- pages/index.js -> Hero + featured
-- pages/catalog.js -> Catalog with Filters
-- pages/product/[id].js -> Product page
-- pages/cart.js, pages/checkout.js
-- components/Header.js, components/ProductCard.js, components/Filters.js
-4. Для SEO добавь Head из 'next/head' и метатеги (title, description, og:).
-5. Подключи real images, CMS или API для товаров. Для оплаты — интегрируй Stripe/PayPal.
-*/
