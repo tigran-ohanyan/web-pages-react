@@ -1,0 +1,319 @@
+import React, { useState, useMemo, useEffect } from 'react';
+
+const ACCENT = '#00AEEF';
+
+const sampleProducts = [
+{ id: 'p1', title: 'TechHead Wireless', category: 'Audio', price: 79, popularity: 4.5, image: '', description: 'Лёгкие беспроводные наушники с шумоподавлением.', reviews: [{name:'Anna', text:'Отличный звук', rating:5}] },
+{ id: 'p2', title: 'BytePad Pro', category: 'Tablets', price: 329, popularity: 4.8, image: '', description: 'Премиальный планшет для творчества и работы.', reviews: [{name:'Igor', text:'Быстрый и удобный', rating:5}] },
+{ id: 'p3', title: 'ChargeX 20W', category: 'Accessories', price: 19, popularity: 4.1, image: '', description: 'Компактное зарядное устройство 20W.', reviews: [{name:'Marta', text:'Маленькое и мощное', rating:4}] },
+{ id: 'p4', title: 'ProCam 4K', category: 'Cameras', price: 499, popularity: 4.9, image: '', description: 'Действительно крутая 4K камера для влогов.', reviews: [{name:'Oleg', text:'Качество видео супер', rating:5}] },
+{ id: 'p5', title: 'StreamPod Mini', category: 'Audio', price: 59, popularity: 4.0, image: '', description: 'USB микрофон для стриминга и подкастов.', reviews: [{name:'Vera', text:'Звук чище, чем ожидала', rating:4}] }
+];
+
+function Header({ go, cartCount }){
+return (
+<header className="w-full bg-white shadow-sm">
+    <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => go('home')}>
+        <div style={{width:44,height:44,background:ACCENT, borderRadius:8}} className="flex items-center justify-center text-white font-bold">TS</div>
+        <div>
+            <h1 className="text-lg font-semibold">TechStore</h1>
+            <p className="text-xs text-gray-500">Modern tech, minimal UI</p>
+        </div>
+    </div>
+
+    <nav className="flex items-center gap-4">
+        <button onClick={() => go('catalog')} className="text-gray-700 hover:text-black">Каталог</button>
+        <button onClick={() => go('catalog')} className="text-gray-700 hover:text-black">Новинки</button>
+        <button onClick={() => go('about')} className="text-gray-700 hover:text-black">О нас</button>
+        <button onClick={() => go('cart')} aria-label="Корзина" className="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+        </svg>
+        {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">{cartCount}</span>}
+        </button>
+    </nav>
+    </div>
+</header>
+);
+}
+
+function Hero({onBuy}){
+return (
+<section className="bg-white">
+    <div className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div>
+            <h2 className="text-4xl font-extrabold leading-tight">Современная электроника <span style={{color:ACCENT}}>без лишнего шума</span></h2>
+            <p className="mt-4 text-gray-600">Минималистичный дизайн, продуманная функциональность и лучшие цены. Обнови свой набор гаджетов сегодня.</p>
+            <div className="mt-6 flex gap-3">
+                <button onClick={onBuy} style={{background:ACCENT}} className="px-5 py-3 rounded-lg text-white font-semibold">Купить сейчас</button>
+                <button className="px-5 py-3 rounded-lg border">Узнать больше</button>
+            </div>
+        </div>
+        <div className="w-full h-64 bg-gray-100 rounded-xl flex items-center justify-center">
+            <div className="text-center text-gray-400">[Placeholder: big hero product image]</div>
+        </div>
+    </div>
+</section>
+);
+}
+
+function Filters({categories, filters, setFilters, priceRange, setPriceRange, sortBy, setSortBy}){
+return (
+<aside className="p-4 bg-white rounded-lg shadow-sm">
+    <h3 className="font-semibold mb-3">Фильтры</h3>
+    <div className="mb-3">
+        <label className="block text-sm text-gray-600 mb-2">Категория</label>
+        <select value={filters.category} onChange={(e)=>setFilters(prev=>({...prev, category: e.target.value}))} className="w-full border p-2 rounded">
+            <option value="">Все</option>
+            {categories.map(c=> <option key={c} value={c}>{c}</option>)}
+        </select>
+    </div>
+    <div className="mb-3">
+        <label className="block text-sm text-gray-600 mb-2">Цена (до)</label>
+        <input type="range" min={0} max={1000} value={priceRange} onChange={(e)=>setPriceRange(Number(e.target.value))} />
+        <div className="text-sm text-gray-600 mt-1">{priceRange} $</div>
+    </div>
+    <div>
+        <label className="block text-sm text-gray-600 mb-2">Сортировка</label>
+        <select value={sortBy} onChange={(e)=>setSortBy(e.target.value)} className="w-full border p-2 rounded">
+            <option value="popular">По популярности</option>
+            <option value="price_asc">Цена: по возрастанию</option>
+            <option value="price_desc">Цена: по убыванию</option>
+        </select>
+    </div>
+</aside>
+);
+}
+
+function ProductCard({p, onOpen}){
+return (
+<article className="bg-white rounded-lg shadow-sm p-4 flex flex-col">
+    <div className="h-40 bg-gray-100 rounded-md mb-3 flex items-center justify-center">[image]</div>
+    <h4 className="font-semibold">{p.title}</h4>
+    <div className="text-sm text-gray-500">{p.category}</div>
+    <div className="mt-2 flex items-center justify-between">
+        <div className="text-lg font-bold">${p.price}</div>
+        <button onClick={()=>onOpen(p)} className="px-3 py-1 rounded bg-gray-100">Подробнее</button>
+    </div>
+</article>
+);
+}
+
+function ProductView({product, addToCart, back}){
+if(!product) return null;
+return (
+<div className="max-w-4xl mx-auto py-8">
+    <button onClick={back} className="text-sm text-gray-600 mb-4">← Вернуться в каталог</button>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg p-6 shadow-sm">
+        <div className="h-64 bg-gray-100 rounded-md flex items-center justify-center">[product image]</div>
+        <div>
+            <h2 className="text-2xl font-bold">{product.title}</h2>
+            <p className="text-gray-500 mt-1">{product.category}</p>
+            <div className="mt-4 text-xl font-extrabold">${product.price}</div>
+            <p className="mt-4 text-gray-700">{product.description}</p>
+            <div className="mt-6 flex gap-3">
+                <button onClick={()=>addToCart(product)} style={{background:ACCENT}} className="px-4 py-2 rounded text-white font-semibold">Добавить в корзину</button>
+                <button className="px-4 py-2 rounded border">Купить в один клик</button>
+            </div>
+
+            <div className="mt-6">
+                <h3 className="font-semibold">Отзывы</h3>
+                <ul className="mt-2 space-y-2">
+                    {product.reviews.map((r,i)=>(
+                    <li key={i} className="text-sm text-gray-700">• <strong>{r.name}:</strong> {r.text}</li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+);
+}
+
+function Cart({items, updateQty, remove, checkout}){
+const total = items.reduce((s,i)=>s + i.qty * i.price,0);
+return (
+<div className="max-w-4xl mx-auto py-8">
+    <h2 className="text-2xl font-bold mb-4">Корзина</h2>
+    {items.length === 0 ? (
+    <div className="bg-white p-6 rounded-lg shadow-sm text-gray-600">Ваша корзина пуста.</div>
+    ) : (
+    <div className="bg-white rounded-lg shadow-sm p-4">
+        <ul className="space-y-3">
+            {items.map(it => (
+            <li key={it.id} className="flex items-center justify-between">
+                <div>
+                    <div className="font-semibold">{it.title}</div>
+                    <div className="text-sm text-gray-500">${it.price} • qty: <input className="w-12 ml-2 border rounded p-1" type="number" min={1} value={it.qty} onChange={(e)=>updateQty(it.id, Number(e.target.value))} /></div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="font-semibold">${(it.price * it.qty).toFixed(2)}</div>
+                    <button onClick={()=>remove(it.id)} className="text-sm text-red-500">Удалить</button>
+                </div>
+            </li>
+            ))}
+        </ul>
+        <div className="mt-6 flex items-center justify-between">
+            <div className="text-lg font-bold">Итого: ${total.toFixed(2)}</div>
+            <button onClick={checkout} style={{background:ACCENT}} className="px-4 py-2 rounded text-white font-semibold">Оформить заказ</button>
+        </div>
+    </div>
+    )}
+</div>
+);
+}
+
+function Checkout({items, submit, back}){
+const total = items.reduce((s,i)=>s + i.qty * i.price,0);
+return (
+<div className="max-w-2xl mx-auto py-8">
+    <button onClick={back} className="text-sm text-gray-600 mb-4">← Вернуться</button>
+    <h2 className="text-2xl font-bold mb-4">Оформление заказа</h2>
+    <div className="bg-white rounded-lg shadow-sm p-6">
+        <label className="block text-sm text-gray-600">Имя</label>
+        <input className="w-full border rounded p-2 mb-3" />
+        <label className="block text-sm text-gray-600">Адрес доставки</label>
+        <input className="w-full border rounded p-2 mb-3" />
+        <label className="block text-sm text-gray-600">Оплата</label>
+        <select className="w-full border rounded p-2 mb-6"><option>Карта</option><option>PayPal</option></select>
+        <div className="flex items-center justify-between">
+            <div>Итого: <strong>${total.toFixed(2)}</strong></div>
+            <button onClick={submit} style={{background:ACCENT}} className="px-4 py-2 rounded text-white font-semibold">Подтвердить заказ</button>
+        </div>
+    </div>
+</div>
+);
+}
+
+export default function TechStoreApp(){
+const [route, setRoute] = useState('home');
+const [products] = useState(sampleProducts);
+const [filters, setFilters] = useState({category: ''});
+const [priceRange, setPriceRange] = useState(1000);
+const [sortBy, setSortBy] = useState('popular');
+const [selectedProduct, setSelectedProduct] = useState(null);
+const [cart, setCart] = useState([]);
+const categories = useMemo(()=>Array.from(new Set(products.map(p=>p.category))),[products]);
+
+useEffect(()=>{
+if(route === 'product' && !selectedProduct) setRoute('catalog');
+},[route, selectedProduct]);
+
+const filtered = useMemo(()=>{
+let res = products.filter(p => p.price <= priceRange);
+if(filters.category) res = res.filter(p=>p.category === filters.category);
+if(sortBy === 'popular') res = res.sort((a,b)=>b.popularity - a.popularity);
+if(sortBy === 'price_asc') res = res.sort((a,b)=>a.price - b.price);
+if(sortBy === 'price_desc') res = res.sort((a,b)=>b.price - a.price);
+return res;
+},[products, filters, priceRange, sortBy]);
+
+function addToCart(product){
+setCart(prev => {
+const exists = prev.find(p=>p.id===product.id);
+if(exists) return prev.map(p=>p.id===product.id?{...p,qty:p.qty+1}:p);
+return [...prev, {...product, qty:1}];
+});
+setRoute('cart');
+}
+
+function updateQty(id, qty){
+if(qty < 1) return;
+setCart(prev => prev.map(p=>p.id===id?{...p,qty}:p));
+}
+function removeFromCart(id){
+setCart(prev => prev.filter(p=>p.id !== id));
+}
+
+function checkout(){
+setRoute('checkout');
+}
+
+function submitOrder(){
+// For prototype: clear cart and show thanks
+setCart([]);
+setRoute('order-confirm');
+}
+
+return (
+<div className="min-h-screen bg-gray-50">
+    <Header go={(r)=>setRoute(r)} cartCount={cart.reduce((s,i)=>s+i.qty,0)} />
+
+        {route === 'home' && (
+        <main>
+            <Hero onBuy={()=>setRoute('catalog')} />
+                <section className="max-w-6xl mx-auto px-4 py-8">
+                    <h3 className="text-xl font-semibold mb-4">Популярные товары</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {products.slice(0,3).map(p=> <ProductCard key={p.id} p={p} onOpen={(prod)=>{ setSelectedProduct(prod); setRoute('product'); }} />)}
+                    </div>
+                </section>
+        </main>
+        )}
+
+        {route === 'catalog' && (
+        <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="md:col-span-1">
+                <Filters categories={categories} filters={filters} setFilters={setFilters} priceRange={priceRange} setPriceRange={setPriceRange} sortBy={sortBy} setSortBy={setSortBy} />
+            </div>
+            <div className="md:col-span-3">
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-2xl font-bold">Каталог</h2>
+                    <div className="text-gray-600">Показываем {filtered.length} товаров</div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filtered.map(p=> <ProductCard key={p.id} p={p} onOpen={(prod)=>{ setSelectedProduct(prod); setRoute('product'); }} />)}
+                </div>
+            </div>
+        </main>
+        )}
+
+        {route === 'product' && (
+        <ProductView product={selectedProduct} addToCart={addToCart} back={()=>setRoute('catalog')} />
+            )}
+
+            {route === 'cart' && (
+            <Cart items={cart} updateQty={updateQty} remove={removeFromCart} checkout={checkout} />
+            )}
+
+            {route === 'checkout' && (
+            <Checkout items={cart} submit={submitOrder} back={()=>setRoute('cart')} />
+                )}
+
+                {route === 'order-confirm' && (
+                <div className="max-w-4xl mx-auto py-16 text-center">
+                    <h2 className="text-3xl font-bold">Спасибо! Ваш заказ принят.</h2>
+                    <p className="mt-4 text-gray-600">Мы свяжемся с вами для подтверждения деталей доставки.</p>
+                    <button onClick={()=>setRoute('home')} className="mt-6 px-4 py-2 rounded" style={{background:ACCENT,color:'#fff'}}>Вернуться на главную</button>
+                </div>
+                )}
+
+                <footer className="mt-12 bg-white border-t">
+                    <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="text-sm text-gray-600">© {new Date().getFullYear()} TechStore — All rights reserved</div>
+                        <div className="text-sm text-gray-600">Made with minimal UI • Accent: {ACCENT}</div>
+                    </div>
+                </footer>
+</div>
+);
+}
+
+/*
+--- Инструкции по интеграции в реальный проект Next.js + Tailwind ---
+1. Создай новый проект:
+npx create-next-app@latest techstore
+2. Установи Tailwind: (в корне проекта)
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+настрой tailwind.config.js -> content: ['./pages/**/*.{js,jsx,ts,tsx}','./components/**/*.{js,jsx,ts,tsx}']
+добавь в globals.css: @tailwind base; @tailwind components; @tailwind utilities;
+3. Разбей этот компонент на страницы и компоненты:
+- pages/index.js -> Hero + featured
+- pages/catalog.js -> Catalog with Filters
+- pages/product/[id].js -> Product page
+- pages/cart.js, pages/checkout.js
+- components/Header.js, components/ProductCard.js, components/Filters.js
+4. Для SEO добавь Head из 'next/head' и метатеги (title, description, og:).
+5. Подключи real images, CMS или API для товаров. Для оплаты — интегрируй Stripe/PayPal.
+*/

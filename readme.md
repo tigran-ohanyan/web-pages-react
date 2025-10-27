@@ -1,80 +1,51 @@
-# Web Projects Repository
+# TechStore — Modern Minimalist E-commerce Website
+- Страница товара с описанием, фото, отзывами и кнопкой **«Добавить в корзину»**
+- Корзина и оформление заказа
+- SEO-дружественные заголовки и адаптивная вёрстка
+- Современный минималистичный интерфейс
+- Цветовая палитра: **белый**, **тёмно-серый**, **#00AEEF (акцент)**
 
-
-Этот репозиторий содержит коллекцию различных веб-приложений, созданных с использованием **Next.js**, **React**, **Tailwind CSS** и других современных технологий.
-
-
-Каждое приложение находится в **отдельной ветке** (branch). Вы можете переключаться между ними, чтобы изучить разные проекты.
-
-
----
-
-
-## Как пользоваться / How to Explore
-
-
+------------------------------------------------
+## Установка и запуск / Installation & Setup
 ### На русском
-
-
-1. Клонируйте репозиторий:
+1. Установите зависимости:
 ```bash
-git clone https://github.com/tigran-ohanyan/web-pages-react/web-projects.git
-cd web-projects
+npm install
 ```
-
-
-2. Посмотрите список доступных веток:
+2. Запустите проект в режиме разработки:
 ```bash
-git branch -a
+npm run dev
 ```
-
-
-3. Перейдите в нужную ветку (например, проект TechStore):
+3. Откройте в браузере:
+```
+http://localhost:3000
+```[readme.md](..%2Fweb-pages-react%2Freadme.md)
+4. Для сборки продакшн-версии:
 ```bash
-git checkout techstore
+npm run build
+npm start
 ```
-
-
-4. Следуйте инструкциям в README внутри каждой ветки — там описаны установка и запуск конкретного проекта.
-
-
----
-
-
 ### In English
-
-
-1. Clone the repository:
+1. Install dependencies:
 ```bash
-git clone https://github.com/username/web-projects.git
-cd web-projects
-```
-
-
-2. Check all available branches:
+npm install
+````
+2. Run the development server:
 ```bash
-git branch -a
+npm run dev
 ```
-
-
-3. Switch to a desired project branch (for example, TechStore):
+3. Open in browser:
+```
+http://localhost:3000
+```
+4. Build and start production:
 ```bash
-git checkout techstore
+npm run build
+npm start
 ```
-
-
-4. Each branch has its own README file with installation and usage instructions.
-
-
----
-
-
-## Примеры веток / Example Branches
-
-
-| Ветка | Описание |
-|--------|-----------|
-| `techstore` | 🛒 Современный интернет-магазин с фильтрами и корзиной |
-
-
----
+------------------------------------------------
+## 🛠️ Технологии / Tech Stack
+- **Next.js** — SSR и SEO-оптимизация
+- **React** — компонентная структура
+- **Tailwind CSS** — современная адаптивная стилизация
+- **Framer Motion** (опционально) — плавные анимации
